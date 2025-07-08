@@ -1,4 +1,4 @@
-package com.TestePalmsoft.teste1;
+package teste1;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
