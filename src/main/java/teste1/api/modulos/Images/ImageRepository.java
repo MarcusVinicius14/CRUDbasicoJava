@@ -7,7 +7,7 @@ import java.util.UUID;
 public interface ImageRepository extends JpaRepository<Image, UUID> {
 
 
-    // Ele vai procurar na tabela 'images' por um registro que tenha o 'imagePath' correspondente.
+    // Procura na tabela 'images' por um registro que tenha o 'imagePath' correspondente.
     Optional<Image> findByImagePath(String imagePath);
 
 }
