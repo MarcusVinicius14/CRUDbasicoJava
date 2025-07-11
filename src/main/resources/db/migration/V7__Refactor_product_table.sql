@@ -1,0 +1,2 @@
+ALTER TABLE product DROP COLUMN IF EXISTS image_data;
+ALTER TABLE product DROP COLUMN IF EXISTS image_type;

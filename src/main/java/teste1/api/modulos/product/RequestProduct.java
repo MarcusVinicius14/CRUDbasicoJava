@@ -11,4 +11,5 @@ public record RequestProduct(
         this(product.getId(), product.getName(), product.getPrice_in_cents());
     }
 
+
 }
