@@ -7,9 +7,11 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import teste1.api.modulos.order.orderItem.DTOorderItem;
+import teste1.api.modulos.order.DTO.CreateOrderDTO;
+import teste1.api.modulos.order.DTO.OrderResponseDTO;
+import teste1.api.modulos.order.orderItem.DTO.OrderItemDTO;
 import teste1.api.modulos.order.orderItem.OrderItem;
-import teste1.api.modulos.order.orderItem.OrderItemResponse;
+import teste1.api.modulos.order.orderItem.DTO.OrderItemResponseDTO;
 import teste1.api.modulos.product.Product;
 import teste1.api.modulos.product.ProductRepository;
 
@@ -30,12 +32,12 @@ public class OrderController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity createOrder(@RequestBody @Valid DTOcreateOrder request) {
+    public ResponseEntity createOrder(@RequestBody @Valid CreateOrderDTO request) {
 
         Orders newOrder = new Orders();
 
         // 2. Itera sobre os itens da requisição para criar os OrderItems
-        for (DTOorderItem itemRequest : request.items()) {
+        for (OrderItemDTO itemRequest : request.items()) {
             // Busca o produto no banco de dados
             Product product = productRepository.findById(itemRequest.productId())
                     .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com ID: " + itemRequest.productId()));
@@ -61,9 +63,9 @@ public class OrderController {
     public ResponseEntity getAllOrders() {
         List<Orders> orders = orderRepository.findAll();
 
-        List<OrderResponse> responseDtos = orders.stream().map(order -> {
-            List<OrderItemResponse> itemResponses = order.getItems().stream()
-                    .map(item -> new OrderItemResponse(
+        List<OrderResponseDTO> responseDtos = orders.stream().map(order -> {
+            List<OrderItemResponseDTO> itemResponses = order.getItems().stream()
+                    .map(item -> new OrderItemResponseDTO(
                             item.getId(),
                             item.getProduct().getId(),
                             item.getProduct().getName(),
@@ -72,7 +74,7 @@ public class OrderController {
                     ))
                     .collect(Collectors.toList());
 
-            return new OrderResponse(
+            return new OrderResponseDTO(
                     order.getId(),
                     order.getOrderDate(),
                     itemResponses
@@ -87,8 +89,8 @@ public class OrderController {
 
         Orders order = orderRepository.getById(id);
 
-        List<OrderItemResponse> itemResponses = order.getItems().stream()
-                .map(item -> new OrderItemResponse(
+        List<OrderItemResponseDTO> itemResponses = order.getItems().stream()
+                .map(item -> new OrderItemResponseDTO(
                         item.getId(),
                         item.getProduct().getId(),
                         item.getProduct().getName(),
@@ -97,7 +99,7 @@ public class OrderController {
                 ))
                 .collect(Collectors.toList());
 
-        OrderResponse responseDto = new OrderResponse(
+        OrderResponseDTO responseDto = new OrderResponseDTO(
                 order.getId(),
                 order.getOrderDate(),
                 itemResponses

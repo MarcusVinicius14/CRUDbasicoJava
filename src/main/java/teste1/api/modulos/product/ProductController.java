@@ -12,9 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import teste1.Validation.ValidImage;
+import teste1.api.Validation.ValidImage;
 import teste1.api.modulos.Images.Image;
 import teste1.api.modulos.Images.ImageRepository;
+import teste1.api.modulos.product.DTO.ProductResponseDTO;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -57,19 +58,19 @@ public class ProductController {
         return ResponseEntity.ok(Product);
     }
 
-    @GetMapping("/images/{filename:.+}")
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename) throws MalformedURLException {
-        // Busca as informações da imagem no banco de dados usando o nome do arquivo.
-        Image image = imageRepository.findByImagePath(filename)
-                .orElseThrow(() -> new EntityNotFoundException("Imagem não encontrada: " + filename));
+    @GetMapping("/images/{id}")
+    public ResponseEntity<Resource> serveFile(@PathVariable UUID id) throws MalformedURLException {
 
-        // Monta o caminho para o arquivo físico no disco.
-        java.nio.file.Path filePath = java.nio.file.Paths.get(uploadDir).resolve(filename).normalize();
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Imagem não encontrada: "));
+
+
+        java.nio.file.Path filePath = java.nio.file.Paths.get(uploadDir).resolve(image.getImagePath()).normalize();
         Resource resource = new UrlResource(filePath.toUri());
 
         // Verifica se o arquivo físico realmente existe.
         if (!resource.exists() || !resource.isReadable()) {
-            throw new RuntimeException("Falha ao carregar o arquivo físico da imagem: " + filename);
+            throw new RuntimeException("Falha ao carregar o arquivo físico da imagem: ");
         }
 
         return ResponseEntity.ok()
@@ -114,7 +115,7 @@ public class ProductController {
             imageUrl = "/product/images/" + savedProduct.getImage().getImagePath();
         }
 
-        ProductResponse responseDto = new ProductResponse(
+        ProductResponseDTO responseDto = new ProductResponseDTO(
                 savedProduct.getId(),
                 savedProduct.getName(),
                 savedProduct.getPrice_in_cents(),
@@ -179,7 +180,7 @@ public class ProductController {
         }
 
         // DTO
-        ProductResponse responseDto = new ProductResponse(
+        ProductResponseDTO responseDto = new ProductResponseDTO(
                 product.getId(),
                 product.getName(),
                 product.getPrice_in_cents(),

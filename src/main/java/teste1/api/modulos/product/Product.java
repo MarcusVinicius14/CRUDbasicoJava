@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import teste1.api.modulos.Images.Image;
+import teste1.api.modulos.product.DTO.RequestProductDTO;
 
 import java.util.UUID;
 
@@ -33,7 +34,7 @@ public class Product {
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Image image;
 
-    public Product(RequestProduct data) {
+    public Product(RequestProductDTO data) {
         this.name = data.name();
         this.price_in_cents = data.price_in_cents();
     }
